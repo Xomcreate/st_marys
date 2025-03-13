@@ -9,6 +9,7 @@ import Mass from './MainComponents/Mass'
 import Marygallery from './MainComponents/Marygallery'
 import Parishact from './MainComponents/Parishact'
 import Header from './MainComponents/Header'
+import Gallery from './MainComponents/Gallery'
 
 
 createRoot(document.getElementById('root')).render(
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')).render(
   <Mass/>
   <Marygallery/>
   <Parishact/>
+  <Gallery/>
   <Contact/>
   <Footer/>
 

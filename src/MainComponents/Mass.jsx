@@ -44,7 +44,7 @@ function Mass() {
             </motion.div>
             <motion.div {...rightAnimation} className="bg-gray-50 rounded-[20px] text-[20px] font-semibold flex flex-col justify-center items-center text-center p-4 max-w-full">
               Friday
-              <p className="text-[15px]">Children Mass 6:30pm</p>
+              <p className="text-[15px]">Children Mass 6:00pm</p>
             </motion.div>
           </div>
         </div>

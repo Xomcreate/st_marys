@@ -8,7 +8,7 @@ function Home2() {
      
      
 
-      <div className="bg-gray-50 min-h-screen w-full flex flex-col items-center p-4">
+      <div className="bg-blue-50 min-h-screen w-full flex flex-col items-center p-4">
         
         {/* About Us Section */}
         <div id="about" className="text-black text-2xl sm:text-3xl font-semibold font-serif text-center my-4">

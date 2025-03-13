@@ -44,9 +44,10 @@ function Footer() {
           <h2 className="text-lg font-semibold">Quick Links</h2>
           <ul className="text-sm mt-2 space-y-1">
             <li><a href="#about" className="hover:text-gray-300 transition transform hover:scale-105">About Us</a></li>
-            <li><a href="#events" className="hover:text-gray-300 transition transform hover:scale-105">Events</a></li>
+            <li><a href="#mass-schedule" className="hover:text-gray-300 transition transform hover:scale-105">Mass Schedule</a></li>
+            <li><a href="#parishactivities" className="hover:text-gray-300 transition transform hover:scale-105">Parish Activities</a></li>
             <li><a href="#gallery" className="hover:text-gray-300 transition transform hover:scale-105">Gallery</a></li>
-            <li><a href="#contact" className="hover:text-gray-300 transition transform hover:scale-105">Contacts</a></li>
+            <li><a href="#contacts" className="hover:text-gray-300 transition transform hover:scale-105">Contacts</a></li>
           </ul>
         </motion.div>
 
@@ -59,10 +60,10 @@ function Footer() {
         >
           <h2 className="text-lg font-semibold">Connect With Us</h2>
           <div className="flex mt-2 space-x-4 text-xl">
-            <a href="#" className="hover:text-gray-300 transition transform hover:scale-110"><FaFacebookF /></a>
-            <a href="#" className="hover:text-gray-300 transition transform hover:scale-110"><CiInstagram /></a>
-            <a href="#" className="hover:text-gray-300 transition transform hover:scale-110"><FaYoutube /></a>
-            <a href="#" className="hover:text-gray-300 transition transform hover:scale-110"><FaTiktok /></a>
+            <a href="https://www.facebook.com/StMarysCatholicChurchIba" className="hover:text-gray-300 transition transform hover:scale-110"><FaFacebookF /></a>
+            <a href="https://www.instagram.com/stmaryscatholicchurchiba/#" className="hover:text-gray-300 transition transform hover:scale-110"><CiInstagram /></a>
+            <a href="https://www.youtube.com/@stmaryscatholicchurchiba" className="hover:text-gray-300 transition transform hover:scale-110"><FaYoutube /></a>
+            <a href="https://www.tiktok.com/@stmaryscatholicchurchiba" className="hover:text-gray-300 transition transform hover:scale-110"><FaTiktok /></a>
           </div>
         </motion.div>
       </div>

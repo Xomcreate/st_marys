@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.jpeg";
 import { FiMenu, FiX } from "react-icons/fi";
 import Register from "./Register";
+import Announce from "./Announce"; // Import Announce component
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isAnnounceOpen, setIsAnnounceOpen] = useState(false); // State for Announce modal
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
 
@@ -70,18 +72,25 @@ function Header() {
                   <a
                     href="#mass-schedule"
                     className="block text-[13px] px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setIsDropdownOpen(false)}
                   >
                     Mass Schedule
                   </a>
                   <a
-                    href="/announcements"
+                    href="#"
                     className="block text-[13px] px-4 py-2 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsAnnounceOpen(true);
+                      setIsDropdownOpen(false);
+                    }}
                   >
                     Announcements
                   </a>
                   <a
                     href="#parishactivities"
                     className="block text-[13px] px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setIsDropdownOpen(false)}
                   >
                     Parish Activities
                   </a>
@@ -158,7 +167,9 @@ function Header() {
               <li className="relative">
                 <button
                   className="hover:text-blue-600"
-                  onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+                  onClick={() =>
+                    setIsMobileDropdownOpen(!isMobileDropdownOpen)
+                  }
                 >
                   Events
                 </button>
@@ -172,9 +183,13 @@ function Header() {
                       Mass Schedule
                     </a>
                     <a
-                      href="/announcements"
+                      href="#"
                       className="block px-4 py-2 hover:bg-gray-100 text-[13px]"
-                      onClick={() => setIsOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsAnnounceOpen(true);
+                        setIsOpen(false);
+                      }}
                     >
                       Announcements
                     </a>
@@ -220,6 +235,41 @@ function Header() {
           onClose={() => setIsRegisterOpen(false)}
         />
       )}
+
+      {/* Announce Modal */}
+      <AnimatePresence>
+        {isAnnounceOpen && (
+          <motion.div
+            className="fixed inset-0 flex justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black opacity-50"
+              onClick={() => setIsAnnounceOpen(false)}
+            ></div>
+            {/* Modal Content */}
+            <motion.div
+              className="relative bg-white rounded-lg shadow-lg p-4 z-10"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Announce />
+              <button
+                className="mt-4 bg-blue-800 text-white rounded-full px-4 py-2"
+                onClick={() => setIsAnnounceOpen(false)}
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
