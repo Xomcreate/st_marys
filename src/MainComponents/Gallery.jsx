@@ -1,88 +1,211 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import mary from '../assets/mary1.jpeg';
+import logo from '../assets/logo.jpeg';
 
-// Import images and video from your assets folder
-import mary1 from '../assets/mary1.jpeg';
-import mary2 from '../assets/mary2.jpeg';
-import vid1 from '../assets/vid1.mp4';
+// Initial images array (can be updated dynamically)
+const initialImages = Array.from({ length: 20 }, (_, i) => ({
+  id: `img-${i}`,
+  src: i % 2 === 0 ? mary : logo,
+  alt: i % 2 === 0 ? `Mary's image ${i + 1}` : `Church logo ${i + 1}`
+}));
 
-// Updated media data including imported images and video
-const slides = [
-  { src: mary1, title: 'Mary Image 1' },
-  { src: mary2, title: 'Mary Image 2' },
-  { src: vid1, title: 'Praying Video' },
-  { src: 'https://via.placeholder.com/800x400?text=Image+2', title: 'Sunset Over the Hills' },
-  { src: 'https://via.placeholder.com/800x400?text=Image+3', title: 'City Lights' },
-  { src: 'https://via.placeholder.com/800x400?text=Image+4', title: 'Forest Path' },
-];
+const Gallery = () => {
+  const [images, setImages] = useState(initialImages);
+  const controls = useAnimation();
+  const galleryRef = useRef(null);
+  const trackRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const isInView = useInView(galleryRef, { once: true, amount: 0.1 });
+  const intervalRef = useRef(null);
 
-function Gallery() {
-  // Calculate the total number of pairs
-  const totalPairs = Math.ceil(slides.length / 2);
-  const [current, setCurrent] = useState(0);
-
-  // Auto-advance to next pair every 5 seconds (slower transition)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % totalPairs);
-    }, 5000); // Increased interval duration
-    return () => clearInterval(interval);
-  }, [totalPairs]);
-
-  // Variants for sliding transition (applied to the container of the pair)
-  const slideVariants = {
-    initial: { opacity: 0, x: 100 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -100 },
+  // Function to add new images (for demonstration)
+  const addNewImage = () => {
+    const newId = `img-${images.length}`;
+    const newImage = {
+      id: newId,
+      src: images.length % 2 === 0 ? mary : logo,
+      alt: images.length % 2 === 0 ? `New Mary's image` : `New Church logo`
+    };
+    setImages(prev => [...prev, newImage]);
   };
 
-  // Extract the current pair of slides
-  const currentPair = slides.slice(current * 2, current * 2 + 2);
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (!isAutoPlaying || !trackRef.current) return;
+
+    const startAutoPlay = () => {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex(prev => {
+          const nextIndex = (prev + 1) % images.length;
+          scrollToImage(nextIndex);
+          return nextIndex;
+        });
+      }, 3000); // Change slide every 3 seconds
+    };
+
+    const scrollToImage = (index) => {
+      const track = trackRef.current;
+      if (!track) return;
+      
+      const itemWidth = track.children[0]?.offsetWidth || 0;
+      const gap = 24; // gap-6 = 1.5rem = 24px
+      track.scrollTo({
+        left: index * (itemWidth + gap),
+        behavior: 'smooth'
+      });
+    };
+
+    startAutoPlay();
+    return () => clearInterval(intervalRef.current);
+  }, [isAutoPlaying, images.length]);
+
+  // Handle scroll to update current index
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const handleScroll = () => {
+      const scrollPosition = track.scrollLeft;
+      const itemWidth = track.children[0]?.offsetWidth || 0;
+      const gap = 24;
+      const newIndex = Math.round(scrollPosition / (itemWidth + gap));
+      setCurrentIndex(newIndex);
+    };
+
+    track.addEventListener('scroll', handleScroll);
+    return () => track.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Start animations when in view
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [controls, isInView]);
+
+  // Pause auto-play on hover
+  const handleMouseEnter = () => {
+    setIsAutoPlaying(false);
+    clearInterval(intervalRef.current);
+  };
+
+  const handleMouseLeave = () => {
+    setIsAutoPlaying(true);
+  };
 
   return (
-    <div className="bg-white min-h-screen w-full flex flex-col items-center justify-center py-12">
-      <h1 className="text-4xl font-bold text-blue-800 mb-8">Parish Gallery</h1>
-      <div className="w-full max-w-6xl mx-auto flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current}
-            variants={slideVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 1 }} // Slower transition (1s)
-            className="grid grid-cols-2 gap-8 w-full px-8"
+    <div className="bg-white py-12 px-4 overflow-hidden">
+      <motion.h1 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-3xl font-bold text-center text-gray-800 mb-12"
+      >
+        Parish Gallery
+      </motion.h1>
+
+      {/* Button to add new images (for demo) */}
+      <div className="flex justify-center mb-6">
+        <button 
+          onClick={addNewImage}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+        >
+          Add New Image
+        </button>
+      </div>
+
+      <div 
+        ref={galleryRef} 
+        className="relative"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Sliding Track */}
+        <motion.div
+          ref={trackRef}
+          className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+          initial="hidden"
+          animate={controls}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05, when: "beforeChildren" }
+            }
+          }}
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          {images.map((image, index) => (
+            <motion.div
+              key={image.id}
+              className="flex-shrink-0 w-64 h-80 sm:w-72 sm:h-96 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg"
+              style={{ scrollSnapAlign: 'start' }}
+              variants={{
+                hidden: { opacity: 0, x: 30 },
+                visible: {
+                  opacity: 1,
+                  x: 0,
+                  transition: { 
+                    duration: 0.5, 
+                    ease: "easeOut",
+                    delay: index * 0.05 
+                  }
+                }
+              }}
+              whileHover={{ scale: 1.03, zIndex: 10 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
+      </div>
+
+      {/* Navigation dots */}
+      <div className="flex justify-center mt-8 gap-2">
+        {images.map((image, index) => (
+          <button
+            key={image.id}
+            onClick={() => {
+              setCurrentIndex(index);
+              const track = trackRef.current;
+              if (track) {
+                const itemWidth = track.children[0]?.offsetWidth || 0;
+                const gap = 24;
+                track.scrollTo({
+                  left: index * (itemWidth + gap),
+                  behavior: 'smooth'
+                });
+              }
+            }}
+            className="w-3 h-3 rounded-full focus:outline-none"
+            aria-label={`Go to image ${index + 1}`}
           >
-            {currentPair.map((slide, index) => (
-              <div
-                key={index}
-                className="relative w-full h-[400px] overflow-hidden rounded-lg shadow-lg"
-              >
-                {typeof slide.src === 'string' && slide.src.endsWith('.mp4') ? (
-                  <video
-                    src={slide.src}
-                    autoPlay
-                    loop
-                    muted
-                    className="w-full h-full object-cover object-center"
-                  />
-                ) : (
-                  <img
-                    src={slide.src}
-                    alt={slide.title}
-                    className="w-full h-full object-cover object-center"
-                  />
-                )}
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4 text-center">
-                  {slide.title}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+            <motion.div
+              className="w-full h-full rounded-full"
+              initial={{ backgroundColor: '#D1D5DB' }}
+              animate={{ 
+                backgroundColor: currentIndex === index ? '#3B82F6' : '#D1D5DB',
+                scale: currentIndex === index ? 1.2 : 1
+              }}
+              transition={{ duration: 0.2 }}
+            />
+          </button>
+        ))}
       </div>
     </div>
   );
-}
+};
 
 export default Gallery;

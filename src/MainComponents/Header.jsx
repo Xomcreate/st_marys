@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.jpeg";
-import { FiMenu, FiX } from "react-icons/fi";
-import Register from "./Register";
+import { FiMenu, FiX, FiBell } from "react-icons/fi";
 import Announce from "./Announce"; // Import Announce component
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolling, setScrolling] = useState(false);
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isAnnounceOpen, setIsAnnounceOpen] = useState(false); // State for Announce modal
+  const [isAnnounceOpen, setIsAnnounceOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
 
@@ -56,7 +54,7 @@ function Header() {
               </a>
             </li>
             <li>
-              <a href="/gallery" className="hover:text-blue-600">
+              <a href="#gallery" className="hover:text-blue-600">
                 Gallery
               </a>
             </li>
@@ -77,17 +75,6 @@ function Header() {
                     Mass Schedule
                   </a>
                   <a
-                    href="#"
-                    className="block text-[13px] px-4 py-2 hover:bg-gray-100"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsAnnounceOpen(true);
-                      setIsDropdownOpen(false);
-                    }}
-                  >
-                    Announcements
-                  </a>
-                  <a
                     href="#parishactivities"
                     className="block text-[13px] px-4 py-2 hover:bg-gray-100"
                     onClick={() => setIsDropdownOpen(false)}
@@ -105,13 +92,13 @@ function Header() {
           </ol>
         </div>
 
-        {/* Desktop Button (Only Register) */}
+        {/* Desktop Announcements Bell Icon inside styled button */}
         <div className="hidden md:flex items-center gap-4">
           <button
-            className="bg-blue-800 h-[40px] w-[100px] text-white font-semibold rounded-full"
-            onClick={() => setIsRegisterOpen(true)}
+            className="bg-blue-800 rounded-full p-2 shadow text-white text-2xl sm:text-3xl"
+            onClick={() => setIsAnnounceOpen(true)}
           >
-            Register
+            <FiBell />
           </button>
         </div>
 
@@ -157,7 +144,7 @@ function Header() {
               </li>
               <li>
                 <a
-                  href="/gallery"
+                  href="#gallery"
                   className="hover:text-blue-600"
                   onClick={() => setIsOpen(false)}
                 >
@@ -183,17 +170,6 @@ function Header() {
                       Mass Schedule
                     </a>
                     <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 text-[13px]"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsAnnounceOpen(true);
-                        setIsOpen(false);
-                      }}
-                    >
-                      Announcements
-                    </a>
-                    <a
                       href="#parishactivities"
                       className="block px-4 py-2 hover:bg-gray-100 text-[13px]"
                       onClick={() => setIsOpen(false)}
@@ -212,29 +188,22 @@ function Header() {
                   Contacts
                 </a>
               </li>
+              {/* Mobile Announcements Bell Icon inside styled button */}
               <li>
                 <button
-                  className="w-[120px] h-[40px] bg-blue-800 text-white font-semibold rounded-full"
+                  className="bg-blue-800 rounded-full p-2 shadow text-white text-2xl sm:text-3xl"
                   onClick={() => {
-                    setIsRegisterOpen(true);
+                    setIsAnnounceOpen(true);
                     setIsOpen(false);
                   }}
                 >
-                  Register
+                  <FiBell />
                 </button>
               </li>
             </ul>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Register Modal */}
-      {isRegisterOpen && (
-        <Register
-          isOpen={isRegisterOpen}
-          onClose={() => setIsRegisterOpen(false)}
-        />
-      )}
 
       {/* Announce Modal */}
       <AnimatePresence>
