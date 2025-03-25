@@ -1,17 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
-import mary from '../assets/mary1.jpeg';
-import logo from '../assets/logo.jpeg';
 
-// Initial images array (can be updated dynamically)
-const initialImages = Array.from({ length: 20 }, (_, i) => ({
-  id: `img-${i}`,
-  src: i % 2 === 0 ? mary : logo,
-  alt: i % 2 === 0 ? `Mary's image ${i + 1}` : `Church logo ${i + 1}`
-}));
+// Import all 20 images from src/assets/
+import logo from '../assets/logo.jpeg';
+import mary2 from '../assets/mary2.jpeg';
+import priest from '../assets/priest.jpeg';
+import mary1 from '../assets/mary1.jpeg';
+
+// Define all 20 images with their metadata
+const galleryImages = [
+  { id: 'img-1', src: logo, alt: 'Church service' },
+  { id: 'img-2', src: mary2, alt: 'Sunday mass' },
+  { id: 'img-3', src: priest, alt: 'Sunday mass' },
+  { id: 'img-4', src: mary1, alt: 'Sunday mass' },
+  
+  
+];
 
 const Gallery = () => {
-  const [images, setImages] = useState(initialImages);
   const controls = useAnimation();
   const galleryRef = useRef(null);
   const trackRef = useRef(null);
@@ -20,17 +26,6 @@ const Gallery = () => {
   const isInView = useInView(galleryRef, { once: true, amount: 0.1 });
   const intervalRef = useRef(null);
 
-  // Function to add new images (for demonstration)
-  const addNewImage = () => {
-    const newId = `img-${images.length}`;
-    const newImage = {
-      id: newId,
-      src: images.length % 2 === 0 ? mary : logo,
-      alt: images.length % 2 === 0 ? `New Mary's image` : `New Church logo`
-    };
-    setImages(prev => [...prev, newImage]);
-  };
-
   // Auto-scroll functionality
   useEffect(() => {
     if (!isAutoPlaying || !trackRef.current) return;
@@ -38,11 +33,11 @@ const Gallery = () => {
     const startAutoPlay = () => {
       intervalRef.current = setInterval(() => {
         setCurrentIndex(prev => {
-          const nextIndex = (prev + 1) % images.length;
+          const nextIndex = (prev + 1) % galleryImages.length;
           scrollToImage(nextIndex);
           return nextIndex;
         });
-      }, 3000); // Change slide every 3 seconds
+      }, 3000);
     };
 
     const scrollToImage = (index) => {
@@ -50,7 +45,7 @@ const Gallery = () => {
       if (!track) return;
       
       const itemWidth = track.children[0]?.offsetWidth || 0;
-      const gap = 24; // gap-6 = 1.5rem = 24px
+      const gap = 24;
       track.scrollTo({
         left: index * (itemWidth + gap),
         behavior: 'smooth'
@@ -59,7 +54,7 @@ const Gallery = () => {
 
     startAutoPlay();
     return () => clearInterval(intervalRef.current);
-  }, [isAutoPlaying, images.length]);
+  }, [isAutoPlaying]);
 
   // Handle scroll to update current index
   useEffect(() => {
@@ -96,7 +91,7 @@ const Gallery = () => {
   };
 
   return (
-    <div className="bg-white py-12 px-4 overflow-hidden">
+    <div id='gallery' className="bg-white py-12 px-4 overflow-hidden">
       <motion.h1 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -105,16 +100,6 @@ const Gallery = () => {
       >
         Parish Gallery
       </motion.h1>
-
-      {/* Button to add new images (for demo) */}
-      <div className="flex justify-center mb-6">
-        <button 
-          onClick={addNewImage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Add New Image
-        </button>
-      </div>
 
       <div 
         ref={galleryRef} 
@@ -137,7 +122,7 @@ const Gallery = () => {
           }}
           style={{ scrollSnapType: 'x mandatory' }}
         >
-          {images.map((image, index) => (
+          {galleryImages.map((image, index) => (
             <motion.div
               key={image.id}
               className="flex-shrink-0 w-64 h-80 sm:w-72 sm:h-96 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg"
@@ -174,7 +159,7 @@ const Gallery = () => {
 
       {/* Navigation dots */}
       <div className="flex justify-center mt-8 gap-2">
-        {images.map((image, index) => (
+        {galleryImages.map((image, index) => (
           <button
             key={image.id}
             onClick={() => {
