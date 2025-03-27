@@ -1,6 +1,6 @@
 import React from 'react';
-import mary2Image from '../assets/mary2.jpeg'; 
-import mary1Image from '../assets/mary1.jpeg'; 
+import mary2Image from '../assets/mary.jpeg'; 
+import mary1Image from '../assets/mary2.jpeg'; 
 
 function Marygallery() {
   return (
